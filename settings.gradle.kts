@@ -15,4 +15,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "HelloAvro"
 include(":app")
- 
+include(":objects")
+include(":server")
