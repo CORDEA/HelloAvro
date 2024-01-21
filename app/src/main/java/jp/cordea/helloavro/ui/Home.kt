@@ -17,7 +17,9 @@ import org.koin.androidx.compose.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 fun Home(viewModel: HomeViewModel = koinViewModel()) {
     Scaffold(topBar = {
-        MediumTopAppBar(title = { Text("Home") })
+        MediumTopAppBar(
+            title = { Text("Home") }
+        )
     }) { padding ->
         Box(modifier = Modifier
             .fillMaxSize()

@@ -7,11 +7,16 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.readBytes
 import jp.cordea.objects.Schemas
 import jp.cordea.objects.User
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 
-class UserRepository(private val client: HttpClient) {
-    suspend fun find(id: Int): User {
+class UserRepository(
+    private val client: HttpClient,
+    private val dispatcher: CoroutineDispatcher
+) {
+    suspend fun find(id: Int): User = withContext(dispatcher) {
         val response = client.get("users/${id}")
-        return Avro.default.openInputStream(User.serializer()) {
+        Avro.default.openInputStream(User.serializer()) {
             decodeFormat = AvroDecodeFormat.Binary(Schemas.user)
         }.from(response.readBytes()).use { it.nextOrThrow() }
     }
