@@ -2,6 +2,7 @@ package jp.cordea
 
 import com.github.avrokotlin.avro4k.Avro
 import com.github.avrokotlin.avro4k.io.AvroEncodeFormat
+import io.github.serpro69.kfaker.faker
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -23,6 +24,7 @@ fun main() {
 }
 
 fun Application.module() {
+    val faker = faker { }
     routing {
         get("/") {
             call.respondText("Hello World!")
@@ -33,7 +35,7 @@ fun Application.module() {
                 call.respond(HttpStatusCode.BadRequest)
                 return@get
             }
-            val user = User(id, "Name")
+            val user = User(id, faker.name.name())
             call.respondBytes(
                 ContentType(
                     "application",
