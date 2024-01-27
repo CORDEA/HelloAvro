@@ -29,6 +29,27 @@ fun Application.module() {
         get("/") {
             call.respondText("Hello World!")
         }
+        get("/users") {
+            val users = (0..100).map {
+                User(it, faker.name.name())
+            }
+            call.respondBytes(
+                ContentType(
+                    "application",
+                    "vnd.apache.avro+binary"
+                )
+            ) {
+                ByteArrayOutputStream().use { stream ->
+                    Avro.default.openOutputStream(User.serializer()) {
+                        encodeFormat = AvroEncodeFormat.Binary
+                        schema = Schemas.user
+                    }.to(stream).use {
+                        it.write(users)
+                    }
+                    stream.toByteArray()
+                }
+            }
+        }
         get("/users/{id}") {
             val id = call.parameters["id"]?.toIntOrNull()
             if (id == null) {

@@ -14,6 +14,13 @@ class UserRepository(
     private val client: HttpClient,
     private val dispatcher: CoroutineDispatcher
 ) {
+    suspend fun findAll(): Iterator<User> = withContext(dispatcher) {
+        val response = client.get("users")
+        Avro.default.openInputStream(User.serializer()) {
+            decodeFormat = AvroDecodeFormat.Binary(Schemas.user)
+        }.from(response.readBytes()).use { it.iterator() }
+    }
+
     suspend fun find(id: Int): User = withContext(dispatcher) {
         val response = client.get("users/${id}")
         Avro.default.openInputStream(User.serializer()) {

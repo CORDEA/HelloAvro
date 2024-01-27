@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel(private val repository: UserRepository) : ViewModel() {
     init {
         viewModelScope.launch {
-            val user = repository.find(1)
+            val users = repository.findAll()
         }
     }
 }
