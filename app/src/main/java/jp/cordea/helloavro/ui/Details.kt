@@ -18,11 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import jp.cordea.helloavro.R
-import org.koin.androidx.compose.koinViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun Details(viewModel: DetailsViewModel = koinViewModel(), navController: NavController, id: Int) {
+fun Details(viewModel: DetailsViewModel, navController: NavController) {
     Scaffold(topBar = {
         MediumTopAppBar(
             title = { Text("Details") },

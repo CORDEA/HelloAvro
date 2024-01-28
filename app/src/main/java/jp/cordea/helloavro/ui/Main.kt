@@ -10,6 +10,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import jp.cordea.helloavro.ui.theme.HelloAvroTheme
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun Main() {
@@ -30,9 +32,10 @@ private fun NavGraph(navController: NavHostController = rememberNavController())
             Home(navController = navController)
         }
         composable("details/{id}") { entry ->
+            val id = requireNotNull(entry.arguments?.getString("id")).toInt()
             Details(
+                viewModel = koinViewModel(parameters = { parametersOf(id) }),
                 navController = navController,
-                id = requireNotNull(entry.arguments?.getString("id")).toInt()
             )
         }
     }
