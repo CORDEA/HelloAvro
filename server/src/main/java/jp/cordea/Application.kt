@@ -16,7 +16,11 @@ import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import jp.cordea.objects.Schemas
 import jp.cordea.objects.User
+import jp.cordea.objects.UserDetails
+import jp.cordea.objects.UserPet
+import jp.cordea.objects.UserPetType
 import java.io.ByteArrayOutputStream
+import kotlin.random.Random
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
@@ -56,7 +60,19 @@ fun Application.module() {
                 call.respond(HttpStatusCode.BadRequest)
                 return@get
             }
-            val user = User(id, faker.name.name())
+            val user = UserDetails(
+                id,
+                faker.name.name(),
+                faker.internet.safeEmail(),
+                (0..Random.nextInt(1, 10)).map {
+                    val isCat = Random.nextBoolean()
+                    UserPet(
+                        if (isCat) UserPetType.CAT else UserPetType.DOG,
+                        if (isCat) faker.cat.name() else faker.dog.name(),
+                        if (isCat) faker.cat.breed() else faker.dog.breed()
+                    )
+                }
+            )
             call.respondBytes(
                 ContentType(
                     "application",
@@ -64,9 +80,9 @@ fun Application.module() {
                 )
             ) {
                 ByteArrayOutputStream().use { stream ->
-                    Avro.default.openOutputStream(User.serializer()) {
+                    Avro.default.openOutputStream(UserDetails.serializer()) {
                         encodeFormat = AvroEncodeFormat.Binary
-                        schema = Schemas.user
+                        schema = Schemas.userDetails
                     }.to(stream).use {
                         it.write(user)
                     }
