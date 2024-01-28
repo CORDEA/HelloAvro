@@ -4,6 +4,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.defaultRequest
 import jp.cordea.helloavro.repositories.UserRepository
+import jp.cordea.helloavro.ui.DetailsViewModel
 import jp.cordea.helloavro.ui.HomeViewModel
 import kotlinx.coroutines.Dispatchers
 import org.koin.androidx.viewmodel.dsl.viewModelOf
@@ -21,4 +22,5 @@ val appModule = module {
     }
     single { UserRepository(get(), get(named("IO"))) }
     viewModelOf(::HomeViewModel)
+    viewModelOf(::DetailsViewModel)
 }

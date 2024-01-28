@@ -17,11 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun Home(viewModel: HomeViewModel = koinViewModel()) {
+fun Home(viewModel: HomeViewModel = koinViewModel(), navController: NavController) {
     Scaffold(topBar = {
         MediumTopAppBar(
             title = { Text("Home") }

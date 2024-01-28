@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -23,10 +24,13 @@ fun Main() {
 }
 
 @Composable
-private fun NavGraph() {
-    NavHost(navController = rememberNavController(), startDestination = "home") {
+private fun NavGraph(navController: NavHostController = rememberNavController()) {
+    NavHost(navController = navController, startDestination = "home") {
         composable("home") {
-            Home()
+            Home(navController = navController)
+        }
+        composable("details/{id}") { entry ->
+            Details(id = requireNotNull(entry.arguments).getInt("id"))
         }
     }
 }
