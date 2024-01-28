@@ -14,6 +14,7 @@ import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,12 +24,19 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun Home(viewModel: HomeViewModel = koinViewModel(), navController: NavController) {
+    viewModel.uiState.requestUserId?.let {
+        LaunchedEffect(it) {
+            navController.navigate("details/${it}")
+            viewModel.onUserDetailsShown()
+        }
+    }
+
     Scaffold(topBar = {
         MediumTopAppBar(
             title = { Text("Home") }
         )
     }) { padding ->
-        if (viewModel.items.isEmpty()) {
+        if (viewModel.uiState.isLoading) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -40,9 +48,9 @@ fun Home(viewModel: HomeViewModel = koinViewModel(), navController: NavControlle
             }
         } else {
             LazyColumn(contentPadding = PaddingValues(vertical = 8.dp)) {
-                viewModel.items.forEach {
+                viewModel.uiState.items.forEach {
                     item {
-                        Item(viewModel = it)
+                        Item(viewModel = viewModel, uiState = it)
                     }
                 }
             }
@@ -51,18 +59,18 @@ fun Home(viewModel: HomeViewModel = koinViewModel(), navController: NavControlle
 }
 
 @Composable
-private fun Item(viewModel: HomeItemViewModel) {
+private fun Item(viewModel: HomeViewModel, uiState: HomeItemUiState) {
     Box(
         Modifier
             .fillMaxWidth()
             .heightIn(min = 56.dp)
-            .clickable {}
+            .clickable { viewModel.onUserClicked(uiState.id) }
     ) {
         Text(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
                 .align(Alignment.CenterStart),
-            text = viewModel.name
+            text = uiState.name
         )
     }
 }

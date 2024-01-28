@@ -12,14 +12,31 @@ class HomeViewModel(private val repository: UserRepository) : ViewModel() {
     init {
         viewModelScope.launch {
             val users = repository.findAll()
-            items = users.asSequence().map {
-                HomeItemViewModel(it.id, it.name)
-            }.toList()
+            uiState = uiState.copy(
+                items = users.asSequence().map {
+                    HomeItemUiState(it.id, it.name)
+                }.toList(),
+                isLoading = false
+            )
         }
     }
 
-    var items by mutableStateOf<List<HomeItemViewModel>>(emptyList())
+    var uiState by mutableStateOf(HomeUiState())
         private set
+
+    fun onUserClicked(id: Int) {
+        uiState = uiState.copy(requestUserId = id)
+    }
+
+    fun onUserDetailsShown() {
+        uiState = uiState.copy(requestUserId = null)
+    }
 }
 
-data class HomeItemViewModel(val id: Int, val name: String)
+data class HomeItemUiState(val id: Int, val name: String)
+
+data class HomeUiState(
+    val items: List<HomeItemUiState> = emptyList(),
+    val isLoading: Boolean = true,
+    val requestUserId: Int? = null,
+)

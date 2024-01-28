@@ -30,7 +30,10 @@ private fun NavGraph(navController: NavHostController = rememberNavController())
             Home(navController = navController)
         }
         composable("details/{id}") { entry ->
-            Details(id = requireNotNull(entry.arguments).getInt("id"))
+            Details(
+                navController = navController,
+                id = requireNotNull(entry.arguments?.getString("id")).toInt()
+            )
         }
     }
 }
